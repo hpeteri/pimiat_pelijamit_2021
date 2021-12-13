@@ -16,7 +16,7 @@ namespace MATH{
     return f;
   }
   i32  RandomInRange_i32(i32 min, i32 max){                                        
-    return MATH::Round(RandomInRange_f32(min, max));
+    return MATH::Round(RandomInRange_f32((f32)min, (f32)max));
   }
   f32  RandomInRange_f32(f32 min, f32 max){
     _seed = (_seed * _m + _n) & _rmask;                                                     

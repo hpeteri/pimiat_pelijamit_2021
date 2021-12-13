@@ -26,6 +26,7 @@ namespace MATH{
   };
 
   Vector2<f32> RotateZ(Vector2<f32> vec, f32 rad);
+  f32 DotProduct(Vector2<f32> a, Vector2<f32> b);
   
   template <typename T>
   struct Vector3{
@@ -42,6 +43,7 @@ namespace MATH{
     inline void operator-= (Vector3<T> v){ x -= v.x; y -= v.y; z -= v.z;}
     inline Vector3<T> operator* (T i){return {x * i, y * i, z * i};}
   };
+  f32 DotProduct(Vector3<f32> a, Vector3<f32> b);
   
   template <typename T>
   struct Vector4{

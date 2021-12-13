@@ -60,9 +60,11 @@ namespace RENDERER{
     CHECK_GL_ERROR("Resize RenderTarget");
   }  
   void SetRenderTarget(RenderTarget renderTarget){
+    CHECK_GL_ERROR("Start of SetRenderTarget");
     glBindFramebuffer(GL_FRAMEBUFFER, renderTarget.framebufferHandle);
+    CHECK_GL_ERROR("Set RenderTarget glBindFrameBuffer");
     glViewport(0, 0, renderTarget.width, renderTarget.height);
-    CHECK_GL_ERROR("Set RenderTarget");
+    CHECK_GL_ERROR("SetRenderTarget glViewPort");
   }
   void SetClearColor(f32 r, f32 g, f32 b, f32 a){
     glClearColor(r, g, b, a);
@@ -91,11 +93,9 @@ namespace RENDERER{
     CHECK_GL_ERROR("Bind read buffer");
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, dst.framebufferHandle);
     CHECK_GL_ERROR("bind write buffer");
-    glBlitFramebuffer(src_x0, src_y0, src_x1, src_y1,
-                      dst_x0, dst_y0, dst_x1, dst_y1,
+    glBlitFramebuffer((i32)src_x0, (i32)src_y0, (i32)src_x1, (i32)src_y1,
+                      (i32)dst_x0, (i32)dst_y0, (i32)dst_x1, (i32)dst_y1,
                       GetGLMaskBits(mask), GL_NEAREST);
     CHECK_GL_ERROR("Blit RenderTarget");
-  
-
   }
 }

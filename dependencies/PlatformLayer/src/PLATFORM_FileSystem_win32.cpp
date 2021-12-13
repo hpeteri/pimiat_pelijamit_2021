@@ -216,7 +216,8 @@ namespace PLATFORM{
     LARGE_INTEGER fileSize;
     GetFileSizeEx(fileHandle, &fileSize);
     
-    char* buffer = (char*)Allocate(fileSize.QuadPart);
+    char* buffer = (char*)Allocate(fileSize.QuadPart + 1);
+   
     if(!buffer){
       return FileContent{0, 0};
     }
@@ -236,6 +237,7 @@ namespace PLATFORM{
     FileContent file;
     file.size = size;
     file.content = (char*)buffer;
+    buffer[file.size] = 0;
     return file;
   }  
   //File Write

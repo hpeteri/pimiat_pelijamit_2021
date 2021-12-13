@@ -162,7 +162,7 @@ void DrawColliders(PhysicsWorld* world){
   for(u32 i = 0; i < world->boxColliders.count; i++){
     auto it = world->boxColliders[i];
     char buffer[256];
-    sprintf(buffer, "%d", it->id);
+    sprintf(buffer, "%lld", it->id);
     RENDERER::IM::Immediate_Text(&renderer.imRenderer,
                                  it->aabb.min.x,
                                  it->aabb.min.y,

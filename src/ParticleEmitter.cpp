@@ -18,7 +18,7 @@ static u32 LerpColor(MATH::Vector4<f32> c0, MATH::Vector4<f32> c1, f32 ratio){
   u32 color = 0;
   for(u32 i = 0; i < 4; i++){
     f32 c = Lerp(c0[i], c1[i], ratio);
-    u8 it = (u8)0xff * c;
+    u8 it = (u8)(0xff * c);
     color |= it << (i *  8);
   }
   return color;
@@ -59,7 +59,7 @@ void DrawParticleEmitter(const ParticleEmitter* emitter){
                                        offscreenState);
 
   RENDERER::BATCH::Instance instance = {0};
-  for(i32 i = 0; i < emitter->particles.count; i++){
+  for(u32 i = 0; i < emitter->particles.count; i++){
     auto particle = emitter->particles.data[i];
 
     instance.model = 
@@ -68,7 +68,7 @@ void DrawParticleEmitter(const ParticleEmitter* emitter){
       MATH::Scale(particle.size, particle.size, 1);
     
     instance.color = particle.color;
-    instance.diffuseLayer = particle.spriteIndex;
+    instance.diffuseLayer = (f32)particle.spriteIndex;
     instance.rotationToLight = particle.rotation;
 
     if(!RENDERER::BATCH::PushInstance(b, instance))

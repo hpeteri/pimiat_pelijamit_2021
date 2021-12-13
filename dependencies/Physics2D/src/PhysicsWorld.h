@@ -77,7 +77,7 @@ bool RemoveRigidBody(PhysicsWorld* world, u64 rigidBody_id);
 //////////////////////////////////////////////////////////////////////
 //Colliders
 u64 CreateCollider(PhysicsWorld* world, u64 rigidBody, Circle shape, COLLIDER_FLAGS flags = (COLLIDER_FLAGS)0);
-u64 CreateCollider(PhysicsWorld* world, u64 rigidBody, Rectangle shape, COLLIDER_FLAGS flags = (COLLIDER_FLAGS)0);
+u64 CreateCollider(PhysicsWorld* world, u64 rigidBody, RectangleShape shape, COLLIDER_FLAGS flags = (COLLIDER_FLAGS)0);
 u64 CreateCollider(PhysicsWorld* world, u64 rigidBody, OrientedRectangle shape, COLLIDER_FLAGS flags = (COLLIDER_FLAGS)0);
 
 void RemoveCollider(PhysicsWorld* world, u64 id);

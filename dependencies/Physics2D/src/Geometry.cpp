@@ -1,21 +1,23 @@
+
 #include "Geometry.h"
 #include <iostream>
+
 const f32 epsilonf32 = 0.000001f;
 //////////////////////////////////////////////////////////////////////
-static void GetLocalMinMaxPoints(Rectangle r, MATH::Vector2<f32>* points){
+static void GetLocalMinMaxPoints(RectangleShape r, MATH::Vector2<f32>* points){
   points[0].x = r.size.x * -0.5f;
   points[1].x = r.size.x * 0.5f;
   points[0].y = r.size.y * -0.5f;
   points[1].y = r.size.y * 0.5f;
 }
-static void GetGlobalMinMaxPoints(Rectangle r, MATH::Vector2<f32>* points){
+static void GetGlobalMinMaxPoints(RectangleShape r, MATH::Vector2<f32>* points){
   points[0].x = r.p0.x - r.size.x * 0.5f;
   points[1].x = r.p0.x + r.size.x * 0.5f;
   points[0].y = r.p0.y - r.size.y * 0.5f;
   points[1].y = r.p0.y + r.size.y * 0.5f;
 }
 
-OrientedRectangle AsOriented(Rectangle rect, f32 rotation){
+OrientedRectangle AsOriented(RectangleShape rect, f32 rotation){
   OrientedRectangle result;
   result.p0 = rect.p0;
   result.size = rect.size;
@@ -47,7 +49,7 @@ void GetGlobalMinMaxPoints(OrientedRectangle r, MATH::Vector2<f32>* points, MATH
   }
 }
 //////////////////////////////////////////////////////////////////////
-void GetGlobalPoints(Rectangle r, MATH::Vector2<f32>* points){
+void GetGlobalPoints(RectangleShape r, MATH::Vector2<f32>* points){
   points[0].x = r.size.x * -0.5f;
   points[0].y = r.size.y * -0.5f;
   
@@ -63,7 +65,7 @@ void GetGlobalPoints(Rectangle r, MATH::Vector2<f32>* points){
   for(u32 i = 0; i < 4; i++)
     points[i] += r.p0;
 }
-void GetGlobalPoints(Rectangle r, MATH::Vector2<f32>* points, MATH::Vector2<f32> offset){
+void GetGlobalPoints(RectangleShape r, MATH::Vector2<f32>* points, MATH::Vector2<f32> offset){
   points[0].x = r.size.x * -0.5f;
   points[0].y = r.size.y * -0.5f;
   
@@ -80,8 +82,12 @@ void GetGlobalPoints(Rectangle r, MATH::Vector2<f32>* points, MATH::Vector2<f32>
     points[i] += r.p0 + offset;
 }
 void GetGlobalPoints(OrientedRectangle r, MATH::Vector2<f32>* points){
-  if(r.rotation == 0.0f) return GetGlobalPoints((Rectangle)r, points);
-  
+  if(r.rotation == 0.0f){
+    RectangleShape rect;
+    rect.p0 = r.p0;
+    rect.size = r.size;
+    return GetGlobalPoints(rect, points);
+  }
   points[0].x = r.size.x * -0.5f;
   points[0].y = r.size.y * -0.5f;
   
@@ -159,7 +165,7 @@ bool IsPointInside(MATH::Vector2<f32> p0, Circle c){
   f32 distance = MATH::Length(p0 - c.p0);
   return distance <= c.r;
 }
-bool IsPointInside(MATH::Vector2<f32> p0, Rectangle r){
+bool IsPointInside(MATH::Vector2<f32> p0, RectangleShape r){
   
   f32 min_x = r.p0.x - r.size.x * 0.5f;
   f32 max_x = r.p0.x + r.size.x * 0.5f;
@@ -171,7 +177,7 @@ bool IsPointInside(MATH::Vector2<f32> p0, Rectangle r){
   return true;
 }
 bool IsPointInside(MATH::Vector2<f32> p0, OrientedRectangle r){
-  if(r.rotation == 0.0f) return IsPointInside(p0, Rectangle(r));
+  if(r.rotation == 0.0f) return IsPointInside(p0, (RectangleShape)r);
   //translate point to rect local space
   p0 = p0 - r.p0;
   
@@ -233,7 +239,7 @@ bool IsColliding_Circle_Circle(Circle a, Circle b){
   f32 d = MATH::Length(b.p0 - a.p0);
   return d < a.r + b.r;
 }
-bool IsColliding_Circle_Rectangle(Circle a, Rectangle b){
+bool IsColliding_Circle_Rectangle(Circle a, RectangleShape b){
   if(IsPointInside(a.p0, b)) return true;
 
   MATH::Vector2<f32> points[2];
@@ -276,7 +282,7 @@ bool IsColliding_Circle_OrientedRectangle(Circle a, OrientedRectangle b){
   return MATH::Length(closestPoint - p0) < a.r;
 }
 //////////////////////////////////////////////////////////////////////
-bool IsColliding_Rectangle_Rectangle(Rectangle a, Rectangle b){
+bool IsColliding_Rectangle_Rectangle(RectangleShape a, RectangleShape b){
   MATH::Vector2<f32> points0[2];
   MATH::Vector2<f32> points1[2];
   
@@ -299,7 +305,7 @@ MATH::Vector2<f32> GetProjectionMinMax(MATH::Vector2<f32>* points, u32 pointCoun
 }
 /*
 */
-bool IsColliding_Rectangle_OrientedRectangle(Rectangle a, OrientedRectangle b){
+bool IsColliding_Rectangle_OrientedRectangle(RectangleShape a, OrientedRectangle b){
   if(b.rotation == 0.0f) return IsColliding_Rectangle_Rectangle(a, b);
   
   MATH::Vector2<f32> normals[4];
@@ -371,7 +377,7 @@ bool IsColliding_Rectangle_OrientedRectangle(Rectangle a, OrientedRectangle b){
   #endif
 }
 
-bool IsColliding_Rectangle_Circle(Rectangle a, Circle b){
+bool IsColliding_Rectangle_Circle(RectangleShape a, Circle b){
   return IsColliding_Circle_Rectangle(b, a);
 }
 

@@ -108,7 +108,7 @@ T* Array<T>::InsertAndKeepOrder(int index, T element){
 }
 template <typename T>
 void Array<T>::Remove(int index){
-  if(index >= this->count) return;
+  if(index >= (i32)this->count) return;
   if(this->count > 1)
     this->data[index] = this->data[this->count - 1];
     
@@ -120,7 +120,7 @@ void Array<T>::Remove(T* element){
 }
 template <typename T>
 void Array<T>::RemoveAndKeepOrder(int index){
-  if(index >= this->count) return;
+  if(index >= (i32)this->count) return;
 
   memcpy(&this->data[index], &this->data[index + 1], (this->count - index - 1) * sizeof(T));
   
@@ -177,7 +177,7 @@ void Array<T>::Sort_Radix256(u64 (*GetComparator)(T)){
   for(int b = 0; b < sizeof(u64); b++){
     memset(counts, 0, sizeof(counts));
 
-    for(unsigned int i = 0; i < elements; i++){
+    for(int i = 0; i < elements; i++){
       counts[(GetComparator(this->data[i]) >> (b * 8)) & 0xff] ++;
     }
 

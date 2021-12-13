@@ -10,7 +10,6 @@
 #include "InputLayer.h"
 #include "PhysicsWorld.h"
 
-
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
@@ -38,16 +37,16 @@ RENDERER::Font         titleFont;
 Core core;
 InputLayer input;
 
-#include "DebugDraw.cpp" //Draw quadtree parititons and colliders
+#include "DebugDraw.cpp" 
 #include "BuildPart.cpp"
 #include "Menu.cpp"
-#include "Game.cpp"
 #include "ParticleEmitter.cpp"
-
+#include "Game.cpp"
+#include "Geometry.h"
 
 Room tempRoom;
 //////////////////////////////////////////////////////////////////////
-bool CreatePlatformWindow(PLATFORM::PlatWindow* window){
+bool CreatePlatformWindow(PLATFORM::PlatWindow* w){
   return true; 
 }
 
@@ -78,7 +77,6 @@ void InitMaterials(){
   RENDERER::ShaderSource fragSource = RENDERER::ShaderSource{RENDERER::FRAGMENT_SHADER, (char*)frag.content};
   
   RENDERER::ShaderSources sources = {vertSource, fragSource};
-
   
   fontMaterial = RENDERER::CreateMaterial(RENDERER::MATERIAL_FLAGS_DIFFUSE_TEXTURE, sources);
   colorMaterial = RENDERER::CreateMaterial(0, sources);
@@ -95,13 +93,13 @@ void Init_Globals(){
   InitMeshPrimitives();
 
   InitMaterials();
-  MATH::SetSeed(PLATFORM::GetCycleCounter());
+  MATH::SetSeed((u32)PLATFORM::GetCycleCounter());
 
   { //Offscreen rendertarget
-    RENDERER::InitRenderTarget(&offscreenState.renderTarget, PART_WIDTH * 20, PART_HEIGHT * 20);
+    RENDERER::InitRenderTarget(&offscreenState.renderTarget, (u32)PART_WIDTH * 20, (u32)PART_HEIGHT * 20);
     offscreenState.projection = MATH::Ortho(0,
-                                            offscreenState.renderTarget.width,
-                                            offscreenState.renderTarget.height,
+                                            (f32)offscreenState.renderTarget.width,
+                                            (f32)offscreenState.renderTarget.height,
                                             0,
                                             0.1f,
                                             10000);
@@ -132,7 +130,7 @@ void Init_Globals(){
 
     //Load first file to get texture dimensions
     auto textureFile = PLATFORM::ReadEntireFile(*fileNames, PLATFORM::GetExecutableDir(), malloc, free);
-    auto pixelData =  stbi_load_from_memory((const stbi_uc*)textureFile.content, textureFile.size, &width, &height, &channels, 4);
+    auto pixelData =  stbi_load_from_memory((const stbi_uc*)textureFile.content, (i32)textureFile.size, &width, &height, &channels, 4);
 
     RENDERER::InitTextureArray(&cardTexture, width, height, sizeof(fileNames) / sizeof(*fileNames), 1, RENDERER::RGBA_8);
     RENDERER::BindTexture(cardTexture);
@@ -145,7 +143,7 @@ void Init_Globals(){
     for(u32 i = 1 ; i < sizeof(fileNames) / sizeof(*fileNames); i++){
       textureFile = PLATFORM::ReadEntireFile(fileNames[i], PLATFORM::GetExecutableDir(), malloc, free);
 
-      pixelData =  stbi_load_from_memory((const stbi_uc*)textureFile.content, textureFile.size, &width, &height, &channels, 4);
+      pixelData =  stbi_load_from_memory((const stbi_uc*)textureFile.content, (i32)textureFile.size, &width, &height, &channels, 4);
       UpdateTextureData(cardTexture, width, height, i, pixelData);
  
       stbi_image_free(pixelData);
@@ -164,7 +162,7 @@ void Init_Globals(){
     i32 width, height, channels;      
     //Load first file to get texture dimensions
     auto textureFile = PLATFORM::ReadEntireFile(*fileNames, PLATFORM::GetExecutableDir(), malloc, free);
-    auto pixelData =  stbi_load_from_memory((const stbi_uc*)textureFile.content, textureFile.size, &width, &height, &channels, 4);
+    auto pixelData =  stbi_load_from_memory((const stbi_uc*)textureFile.content, (i32)textureFile.size, &width, &height, &channels, 4);
 
     RENDERER::InitTextureArray(&playerTexture, width, height, sizeof(fileNames) / sizeof(*fileNames), 1, RENDERER::RGBA_8);
     RENDERER::BindTexture(playerTexture);
@@ -178,7 +176,7 @@ void Init_Globals(){
     for(u32 i = 1 ; i < sizeof(fileNames) / sizeof(*fileNames); i++){
       
       textureFile = PLATFORM::ReadEntireFile(fileNames[i], PLATFORM::GetExecutableDir(), malloc, free);
-      pixelData =  stbi_load_from_memory((const stbi_uc*)textureFile.content, textureFile.size, &width, &height, &channels, 4);
+      pixelData =  stbi_load_from_memory((const stbi_uc*)textureFile.content, (i32)textureFile.size, &width, &height, &channels, 4);
       UpdateTextureData(playerTexture, width, height, i, pixelData);
  
       stbi_image_free(pixelData);
@@ -195,7 +193,7 @@ void Init_Globals(){
       i32 width, height, channels;      
       //Load first file to get texture dimensions
       auto textureFile = PLATFORM::ReadEntireFile(*fileNames, PLATFORM::GetExecutableDir(), malloc, free);
-      auto pixelData =  stbi_load_from_memory((const stbi_uc*)textureFile.content, textureFile.size, &width, &height, &channels, 4);
+      auto pixelData =  stbi_load_from_memory((const stbi_uc*)textureFile.content, (i32)textureFile.size, &width, &height, &channels, 4);
 
       RENDERER::InitTextureArray(&particleTexture, width, height, sizeof(fileNames) / sizeof(*fileNames), 1, RENDERER::RGBA_8);
       RENDERER::BindTexture(particleTexture);
@@ -208,7 +206,7 @@ void Init_Globals(){
       for(u32 i = 1 ; i < sizeof(fileNames) / sizeof(*fileNames); i++){
         textureFile = PLATFORM::ReadEntireFile(fileNames[i], PLATFORM::GetExecutableDir(), malloc, free);
 
-        pixelData =  stbi_load_from_memory((const stbi_uc*)textureFile.content, textureFile.size, &width, &height, &channels, 4);
+        pixelData =  stbi_load_from_memory((const stbi_uc*)textureFile.content, (i32)textureFile.size, &width, &height, &channels, 4);
         UpdateTextureData(particleTexture, width, height, i, pixelData);
  
         stbi_image_free(pixelData);
@@ -298,12 +296,12 @@ void UpdateFPS(u64 &elapsedTime, u32 &frameCount){
   frameCount ++;
   if(elapsedTime >= PLATFORM::MICRO_SECONDS_IN_A_SECOND){
     elapsedTime -= PLATFORM::MICRO_SECONDS_IN_A_SECOND;
-    //printf("%d FPS\n", frameCount);
+    printf("%d FPS\n", frameCount);
     frameCount = 0;
   }
 }
 int main(){
-  if(!PLATFORM::Create_Window("Pimiät Pelijamit 2021 Henrik Peteri", CreatePlatformWindow, &window)){
+  if(!PLATFORM::Create_Window("Pimiat Pelijamit 2021 : Henrik Peteri", CreatePlatformWindow, &window)){
     return 1;
   }  
   if(!Create_GLContext(&window))
@@ -322,11 +320,11 @@ int main(){
   
   InitPhysicsWorld(&core.currentRoom->world,
                    0, 0,
-                   offscreenState.renderTarget.width,
-                   offscreenState.renderTarget.height,
+                   (f32)offscreenState.renderTarget.width,
+                   (f32)offscreenState.renderTarget.height,
                    malloc, free);
   
-  Rectangle rect;
+  RectangleShape rect;
   rect.p0 = {0, 0};
   rect.size.x = 20;
   rect.size.y = 50;
@@ -334,24 +332,24 @@ int main(){
   {
     //Bottom
     //These need to be static rigid bodies
-    rect.p0.x = offscreenState.renderTarget.width / 2; 
-    rect.size.y = WALL_SIZE;
-    rect.size.x = offscreenState.renderTarget.width;
+    rect.p0.x = offscreenState.renderTarget.width / 2.0f; 
+    rect.size.y = (f32)WALL_SIZE;
+    rect.size.x = (f32)offscreenState.renderTarget.width;
     CreateCollider(&core.currentRoom->world, 0, rect);
 
     //Top
-    rect.p0.y = offscreenState.renderTarget.height;
+    rect.p0.y = (f32)offscreenState.renderTarget.height;
     CreateCollider(&core.currentRoom->world, 0, rect);
 
-    rect.p0.y /= 2;
+    rect.p0.y /= 2.0f;
     rect.p0.x = 0;
-    rect.size.x = WALL_SIZE;
-    rect.size.y = offscreenState.renderTarget.height;
+    rect.size.x =(f32) WALL_SIZE;
+    rect.size.y = (f32)offscreenState.renderTarget.height;
     CreateCollider(&core.currentRoom->world, 0, rect);
 
-    rect.p0.x = offscreenState.renderTarget.width;
-    rect.size.x = WALL_SIZE;
-    rect.size.y = offscreenState.renderTarget.height;
+    rect.p0.x = (f32)offscreenState.renderTarget.width;
+    rect.size.x = (f32)WALL_SIZE;
+    rect.size.y = (f32)offscreenState.renderTarget.height;
     CreateCollider(&core.currentRoom->world, 0, rect);
   }
   
@@ -407,17 +405,19 @@ int main(){
         }
       case(PLATFORM::EVENT_MOUSE_MOTION):
         {
-          f32 offx = (f32)event.mouse.x;
-          f32 offy = mainRenderTarget.height - (f32)event.mouse.y;
+          
+          input.input.mouse.x = event.mouse.x;
+          input.input.mouse.y = mainRenderTarget.height - event.mouse.y;
+          
+          f32 offx = (f32)input.input.mouse.x;
+          f32 offy = (f32)input.input.mouse.y;
 
-          input.input.mouse.x = offx;
-          input.input.mouse.y = offy;
 
           f32 scale = MIN(mainRenderTarget.width / (f32)offscreenState.renderTarget.width,
                           mainRenderTarget.height / (f32)offscreenState.renderTarget.height);
           
-          auto scaledWidth = offscreenState.renderTarget.width * scale;
-          auto scaledHeight = offscreenState.renderTarget.height * scale;
+          f32 scaledWidth = offscreenState.renderTarget.width * scale;
+          f32 scaledHeight = offscreenState.renderTarget.height * scale;
 
           f32 x_pad = mainRenderTarget.width - scaledWidth;
           f32 y_pad = mainRenderTarget.height - scaledHeight;
@@ -474,8 +474,8 @@ int main(){
 
       RENDERER::BlitRenderTarget(offscreenState.renderTarget,
                                  0.0f, 0.0f,
-                                 offscreenState.renderTarget.width,
-                                 offscreenState.renderTarget.height,
+                                 (f32)offscreenState.renderTarget.width,
+                                 (f32)offscreenState.renderTarget.height,
                                  mainRenderTarget,
                                  middle_x - scaledHalfWidth,
                                  middle_y - scaledHalfHeight,
@@ -492,7 +492,7 @@ int main(){
     //////////////////////////////////////////////////////////////////////
     u64 endTime = PLATFORM::GetClockTime_MicroS();
     
-    core.dt_visual = core.dt_sim = PLATFORM::MS_TO_SEC(endTime - startTime);
+    core.dt_visual = core.dt_sim = (f32)PLATFORM::MS_TO_SEC(endTime - startTime);
     //core.dt_visual = core.dt_sim = 0.016f;
     elapsedTime  += (endTime - startTime);
     startTime = endTime;

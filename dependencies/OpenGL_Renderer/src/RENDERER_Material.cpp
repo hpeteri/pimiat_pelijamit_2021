@@ -86,7 +86,6 @@ namespace RENDERER{
       glEnableVertexAttribArray(i);
   }
   void SetMaterialVertexDescriptors_Batch(){
-    Vertex vertex;
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, x));
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, tc_x));
     glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex), (void*)offsetof(Vertex, color));
@@ -99,49 +98,48 @@ namespace RENDERER{
     }
   }
   void SetMaterialInstanceDescriptors_Batch(u32 flags){
-    RENDERER::BATCH::Instance inst;
     glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE,
-                          sizeof(inst),
-                          (void*)offsetof(typeof(inst), model.col0));
+                          sizeof(RENDERER::BATCH::Instance),
+                          (void*)offsetof(RENDERER::BATCH::Instance, model.col0));
     glVertexAttribDivisor(4, 1);
       
     glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE,
-                          sizeof(inst),
-                          (void*)offsetof(typeof(inst), model.col1));
+                          sizeof(RENDERER::BATCH::Instance),
+                          (void*)offsetof(RENDERER::BATCH::Instance, model.col1));
     glVertexAttribDivisor(5, 1);
       
     glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE,
-                          sizeof(inst),
-                          (void*)offsetof(typeof(inst), model.col2));
+                          sizeof(RENDERER::BATCH::Instance),
+                          (void*)offsetof(RENDERER::BATCH::Instance, model.col2));
     glVertexAttribDivisor(6, 1);
       
     glVertexAttribPointer(7, 4, GL_FLOAT, GL_FALSE,
-                          sizeof(inst),
-                          (void*)offsetof(typeof(inst), model.col3));
+                          sizeof(RENDERER::BATCH::Instance),
+                          (void*)offsetof(RENDERER::BATCH::Instance, model.col3));
     glVertexAttribDivisor(7, 1);
     
     glVertexAttribPointer(3, 4, GL_UNSIGNED_BYTE, GL_TRUE, 
-                          sizeof(inst),
-                          (void*)offsetof(typeof(inst), color));
+                          sizeof(RENDERER::BATCH::Instance),
+                          (void*)offsetof(RENDERER::BATCH::Instance, color));
     glVertexAttribDivisor(3, 1);
 
     if(flags & MATERIAL_FLAGS_DIFFUSE_TEXTURE){
       glVertexAttribPointer(8, 1, GL_FLOAT, GL_FALSE,  
-                            sizeof(inst),
-                            (void*)offsetof(typeof(inst), diffuseLayer));
+                            sizeof(RENDERER::BATCH::Instance),
+                            (void*)offsetof(RENDERER::BATCH::Instance, diffuseLayer));
       glVertexAttribDivisor(8, 1);
     }
 
     if(flags & MATERIAL_FLAGS_LIGHT_TEXTURE){
       glVertexAttribPointer(9, 1, GL_FLOAT, GL_FALSE,  
-                            sizeof(inst),
-                            (void*)offsetof(typeof(inst), lightLayer));
+                            sizeof(RENDERER::BATCH::Instance),
+                            (void*)offsetof(RENDERER::BATCH::Instance, lightLayer));
       
       glVertexAttribDivisor(9, 1);
       
       glVertexAttribPointer(10, 1, GL_FLOAT, GL_FALSE,  
-                            sizeof(inst),
-                            (void*)offsetof(typeof(inst), rotationToLight));
+                            sizeof(RENDERER::BATCH::Instance),
+                            (void*)offsetof(RENDERER::BATCH::Instance, rotationToLight));
       
       glVertexAttribDivisor(10, 1);
     

@@ -25,7 +25,7 @@ struct GameState{
   //////////////////////////////////////////////////
   //Drag stuff
   bool isCardDragged;
-  u32 hoveredCardIndex;
+  i32 hoveredCardIndex;
   
   MATH::Vector2<f32> mouseLocalSpace;
   MATH::Vector2<f32> cardDragOffset;

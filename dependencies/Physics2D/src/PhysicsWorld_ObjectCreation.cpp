@@ -46,7 +46,7 @@ u64 CreateCollider(PhysicsWorld* world, u64 rigidBody_id, Circle shape, COLLIDER
   }
   return it->id;
 }
-u64 CreateCollider(PhysicsWorld* world, u64 rigidBody_id, Rectangle shape, COLLIDER_FLAGS flags){
+u64 CreateCollider(PhysicsWorld* world, u64 rigidBody_id, RectangleShape shape, COLLIDER_FLAGS flags){
   BoxCollider collider;
   collider.id = ++world->runningCollider_id;
   collider.rigidBody_id = rigidBody_id;

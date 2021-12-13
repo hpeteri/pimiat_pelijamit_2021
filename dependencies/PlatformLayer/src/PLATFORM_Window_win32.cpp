@@ -280,5 +280,8 @@ namespace PLATFORM{
     wglDeleteContext(temp_glContext);
     return true;
   }
+  void Destroy_Window(PlatWindow* window){
+    
+  }
 };
     

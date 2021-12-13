@@ -18,9 +18,9 @@ void SetPlayGame(){
   core.buildPartCards.count = 0;   
   for(u32 i = 0; i < CARDS_TO_ROLL; i++){
     core.buildPartCards.Add(RollNewBuildPartCard(CARD_HEIGHT,
-                                                 GetBuildStageYSplitPoint() + CARD_HEIGHT,
-                                                 offscreenState.renderTarget.width - CARD_HEIGHT,
-                                                 offscreenState.renderTarget.height - CARD_HEIGHT));
+                                                 (f32)GetBuildStageYSplitPoint() + CARD_HEIGHT,
+                                                 (f32)offscreenState.renderTarget.width - CARD_HEIGHT,
+                                                 (f32)offscreenState.renderTarget.height - CARD_HEIGHT));
   }
 
   core.player.parts.count = 0;
@@ -84,8 +84,6 @@ void SetPlayGame(){
     core.windParticles.particlesPerSecond = 40;
   }
   core.windParticles.particles.count = 0;
-  
-  BuildPartCard RollNewPartCard();
 }
 void SetShouldQuit(){
   core.mode = PROGRAM_MODE_SHOULD_QUIT;
@@ -129,8 +127,8 @@ void DrawMainMenu(){
   u32 otherColor = 0xffffffff;
     
   RENDERER::IM::Immediate_Begin(&renderer.imRenderer, RENDERER::TOPOLOGY_TRIANGLES, offscreenState);
-  f32 cx = offscreenState.renderTarget.width / 2;
-  f32 cy = offscreenState.renderTarget.height / 2;
+  f32 cx = offscreenState.renderTarget.width / 2.0f;
+  f32 cy = offscreenState.renderTarget.height / 2.0f;
 
   f32 pad = 10;
   f32 titleScale = 3;

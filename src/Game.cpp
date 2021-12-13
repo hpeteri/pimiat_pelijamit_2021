@@ -3,12 +3,12 @@
 //////////////////////////////////////////////////////////////////////
 //Build stage
 f32 GetBuildStageYSplitPoint(){
-  return  offscreenState.renderTarget.height / 3; 
+  return offscreenState.renderTarget.height / 3.0f; 
 }
 MATH::Vector2<f32> GetPresumedCenter(){
   MATH::Vector2<f32> c;
-  c.x = offscreenState.renderTarget.width / 2;
-  c.y = GetBuildStageYSplitPoint() / 2;
+  c.x = offscreenState.renderTarget.width / 2.0f;
+  c.y = GetBuildStageYSplitPoint() / 2.0f;
   return c;
 }
 void DoBuildStageControls(){
@@ -300,7 +300,7 @@ void DrawBuildStageBG(){
       
   RENDERER::IM::Immediate_Line(&renderer.imRenderer,
                                0, cy,
-                               offscreenState.renderTarget.width,
+                               (f32)offscreenState.renderTarget.width,
                                cy,
                                5,
                                (u32)~0);
@@ -320,7 +320,7 @@ void DrawBuildStageCards(){
     auto card = *core.buildPartCards[i];
 
     RENDERER::BATCH::Instance instance = {0};
-    f32 sizeIncrease = (core.gameState.hoveredCardIndex == i && !card.isLocked) ? 10 : 0;
+    f32 sizeIncrease = (core.gameState.hoveredCardIndex == (i32)i && !card.isLocked) ? 10.0f : 0.0f;
     
     instance.model = 
       MATH::Translate(card.position.x, card.position.y, 1) *
@@ -408,8 +408,8 @@ void DrawBuildStageUI(){
   
   RENDERER::IM::Immediate_Begin(&renderer.imRenderer, RENDERER::TOPOLOGY_TRIANGLES, offscreenState);
 
-  f32 cx = offscreenState.renderTarget.width / 2;
-  f32 cy = offscreenState.renderTarget.height;
+  f32 cx = offscreenState.renderTarget.width / 2.0f;
+  f32 cy = (f32)offscreenState.renderTarget.height;
 
   MATH::Vector2<f32> textSize = GetTextSize(title,
                                             scale,
@@ -465,10 +465,10 @@ void DrawGame(){
     instance.model = 
       MATH::Translate(core.player.position.x + offset_x, core.player.position.y + offset_y, 1) * 
       MATH::RotateZ(core.player.rotation + part.rotation) *
-      MATH::Scale(PART_WIDTH, PART_HEIGHT, 1);
+      MATH::Scale((f32)PART_WIDTH, (f32)PART_HEIGHT, 1);
     
     instance.color = (u32)~0;
-    instance.diffuseLayer = part.spriteIndex;
+    instance.diffuseLayer = (f32)part.spriteIndex;
 
     if(!RENDERER::BATCH::PushInstance(batch, instance))
       batch = RENDERER::BATCH::BeginBatch(&renderer.batchRenderer, "quad", offscreenState);
@@ -502,8 +502,8 @@ void DrawGame(){
     //////////////////////////////////////////////////
     //Left
     instance.model = 
-      MATH::Translate(0, offscreenState.renderTarget.height / 2, 1) * 
-      MATH::Scale(WALL_SIZE, offscreenState.renderTarget.height, 1);
+      MATH::Translate(0, offscreenState.renderTarget.height / 2.0f, 1) * 
+      MATH::Scale((f32)WALL_SIZE, (f32)offscreenState.renderTarget.height, 1);
     
     if(!RENDERER::BATCH::PushInstance(batch, instance))
       batch = RENDERER::BATCH::BeginBatch(&renderer.batchRenderer, "quad", offscreenState);
@@ -511,8 +511,8 @@ void DrawGame(){
     //////////////////////////////////////////////////
     //Right 
     instance.model = 
-      MATH::Translate(offscreenState.renderTarget.width, offscreenState.renderTarget.height / 2, 1) * 
-      MATH::Scale(WALL_SIZE, offscreenState.renderTarget.height, 1);
+      MATH::Translate((f32)offscreenState.renderTarget.width, offscreenState.renderTarget.height / 2.0f, 1) * 
+      MATH::Scale((f32)WALL_SIZE, (f32)offscreenState.renderTarget.height, 1);
     
     if(!RENDERER::BATCH::PushInstance(batch, instance))
       batch = RENDERER::BATCH::BeginBatch(&renderer.batchRenderer, "quad", offscreenState);
@@ -521,7 +521,7 @@ void DrawGame(){
     //Bottom
     instance.model = 
       MATH::Translate(offscreenState.renderTarget.width / 2.0f, 0, 1) * 
-      MATH::Scale(offscreenState.renderTarget.width, WALL_SIZE, 1);
+      MATH::Scale((f32)offscreenState.renderTarget.width, (f32)WALL_SIZE, 1);
     
     if(!RENDERER::BATCH::PushInstance(batch, instance))
       batch = RENDERER::BATCH::BeginBatch(&renderer.batchRenderer, "quad", offscreenState);
@@ -530,8 +530,8 @@ void DrawGame(){
     //////////////////////////////////////////////////
     //Top
     instance.model = 
-      MATH::Translate(offscreenState.renderTarget.width / 2.0f, offscreenState.renderTarget.height, 1) * 
-      MATH::Scale(offscreenState.renderTarget.width, WALL_SIZE, 1);
+      MATH::Translate((f32)offscreenState.renderTarget.width / 2.0f, (f32)offscreenState.renderTarget.height, 1) * 
+      MATH::Scale((f32)offscreenState.renderTarget.width, (f32)WALL_SIZE, 1);
     
     if(!RENDERER::BATCH::PushInstance(batch, instance))
       batch = RENDERER::BATCH::BeginBatch(&renderer.batchRenderer, "quad", offscreenState);
@@ -568,8 +568,8 @@ void DrawGame(){
       
     RENDERER::IM::Immediate_Begin(&renderer.imRenderer, RENDERER::TOPOLOGY_TRIANGLES, offscreenState);
 
-    f32 cx = offscreenState.renderTarget.width / 2;
-    f32 cy = offscreenState.renderTarget.height / 2;
+    f32 cx = offscreenState.renderTarget.width / 2.0f;
+    f32 cy = offscreenState.renderTarget.height / 2.0f;
 
     MATH::Vector2<f32> textSize = GetTextSize(title0,
                                               scale0,

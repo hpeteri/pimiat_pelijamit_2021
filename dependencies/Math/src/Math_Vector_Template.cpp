@@ -26,12 +26,4 @@ template <typename T>
 Vector3<T> CrossProduct(Vector3<T> v, Vector3<T> w){
   return {(v.y * w.z) - (w.y * v.z) ,(v.z * w.x) - (w.z * v.x), (v.x * w.y) - (w.x * v.y)};
 }
-template <typename T>
-T DotProduct(Vector2<T> a, Vector2<T> b){
-  return a.x * b.x + a.y * b.y;
-}
-template <typename T>
-T DotProduct(Vector3<T> a, Vector3<T> b){
-  return a.x * b.x + a.y * b.y + a.z * b.z;
-}
 

@@ -210,7 +210,6 @@ static void SolveCollision(PhysicsWorld* world, f32 dt, Collisions* collisionsFo
   Collider* collider_a = collisionsForA->a;
   RigidBody* rb_a = GetMovedRigidBodyWithID(world, collider_a->rigidBody_id);
   if(!rb_a){
-    printf("Entity %d already got removed, basically created and removed during the same frame\n", collider_a->rigidBody_id);
     //Rigid body got removed, but we don't remove it from the moved rigid bodies array
     return;
   }
@@ -245,15 +244,15 @@ static void SolveCollision(PhysicsWorld* world, f32 dt, Collisions* collisionsFo
     const f32 inv_mass_total = GetInverseMass(mass_a) + GetInverseMass(mass_b);
    
     //Calculate final velocity
-    auto arm_a = pointOfContact - rb_a->system.centerOfMass;
-    auto rotV_a = MATH::Normal(normal * MATH::Length(arm_a) * rb_a->system.angularVelocity);
-    auto Vf_a = rb_a->system.linearVelocity + rotV_a;
-                
-    auto arm_b = pointOfContact - (rb_b ? rb_b->system.centerOfMass : collider_b->position);
-    auto rotV_b = rb_b ? MATH::Normal(arm_b * rb_b->system.angularVelocity) : typeof(rotV_a){0, 0};
-    auto Vf_b = rotV_b + (rb_b ? rb_b->system.linearVelocity : typeof(rotV_a){0, 0});
+    MATH::Vector2<f32> arm_a = pointOfContact - rb_a->system.centerOfMass;
+    MATH::Vector2<f32> rotV_a = MATH::Normal(normal * MATH::Length(arm_a) * rb_a->system.angularVelocity);
+    MATH::Vector2<f32> Vf_a = rb_a->system.linearVelocity + rotV_a;
 
-    auto V_rel = Vf_a - Vf_b;
+    MATH::Vector2<f32> arm_b = pointOfContact - (rb_b ? rb_b->system.centerOfMass : collider_b->position);
+    MATH::Vector2<f32> rotV_b = rb_b ? MATH::Normal(arm_b * rb_b->system.angularVelocity) : MATH::Vector2<f32>{0, 0};
+    MATH::Vector2<f32> Vf_b = rotV_b + (rb_b ? rb_b->system.linearVelocity : MATH::Vector2<f32>{0, 0});
+    
+    MATH::Vector2<f32> V_rel = Vf_a - Vf_b;
 
     f32 inertia_a = rb_a->system.inertia;
         
@@ -285,8 +284,8 @@ static void SolveCollision(PhysicsWorld* world, f32 dt, Collisions* collisionsFo
       rb_a->position += collision->manifold.normal * collision->manifold.depth;
       auto angularImpulse_a = (inertia_a != 0.0f)? (MATH::CrossProduct2D(arm_a, impulse) / inertia_a) : 0;
     
-      rb_a->linearVelocity += impulse * GetInverseMass(mass_a) / collider_a->perFrame.uniqueCollisions;  
-      rb_a->angularVelocity += angularImpulse_a / collider_a->perFrame.uniqueCollisions;
+      rb_a->linearVelocity += impulse * GetInverseMass(mass_a) / (f32)collider_a->perFrame.uniqueCollisions;  
+      rb_a->angularVelocity += angularImpulse_a / (f32)collider_a->perFrame.uniqueCollisions;
     }
     //////////////////////////////////////////////////////////////////////  
     // RigidBody B
@@ -295,8 +294,8 @@ static void SolveCollision(PhysicsWorld* world, f32 dt, Collisions* collisionsFo
       auto angularImpulse_b = (inertia_b != 0.0f) ? (MATH::CrossProduct2D(arm_b, impulse) / inertia_b) : 0;
       
       
-      rb_b->linearVelocity -= impulse * GetInverseMass(mass_b) / collider_b->perFrame.uniqueCollisions;
-      rb_b->angularVelocity -= angularImpulse_b / collider_b->perFrame.uniqueCollisions;
+      rb_b->linearVelocity -= impulse * GetInverseMass(mass_b) / (f32)collider_b->perFrame.uniqueCollisions;
+      rb_b->angularVelocity -= angularImpulse_b / (f32)collider_b->perFrame.uniqueCollisions;
     }
     //////////////////////////////////////////////////////////////////////
   }      
@@ -312,8 +311,8 @@ static void SolveCollisions(PhysicsWorld* world, f32 dt){
     if(!collisionsForA){ //Array needs to be expanded  
       collisionsForA = world->collisionPairs.Add(nullptr);
       //Initialize every array, this is just stupid, but don't have a solution for this yet
-      for(u32 i = world->collisionPairs.count - 1; i < world->collisionPairs.size; i++){
-        auto it = world->collisionPairs[i];          
+      for(u32 ii = world->collisionPairs.count - 1; ii < world->collisionPairs.size; ii++){
+        auto it = world->collisionPairs[ii];          
         it->collisions.Init(world->Allocate, world->Free);
       }
     }else{
@@ -409,7 +408,7 @@ static void CorrectEventTypes(Array<PhysicsWorldEvent> &events,
       }
     }
     if(found) continue;
-    for(i32 ii = (i32)startIndex - 1; ii >= 0 && ii < events_prev.count; ii --){
+    for(i32 ii = (i32)startIndex - 1; ii >= 0 && ii < (i32)events_prev.count; ii --){
       lastFrameEvent = events_prev[ii];
       if(CorrectEventIfMatch(eventToCheck, lastFrameEvent)){
         found = true;
@@ -434,7 +433,7 @@ static void CorrectEventTypes(Array<PhysicsWorldEvent> &events,
       }
     }
     if(found) continue;
-    for(i32 ii = (i32)startIndex - 1; ii >= 0  && ii < events.count; ii --){
+    for(i32 ii = (i32)startIndex - 1; ii >= 0  && ii < (i32)events.count; ii --){
       lastFrameEvent = events[ii];
       if(eventToCheck->rigidBody_id_b == lastFrameEvent->rigidBody_id_b){
         found = true;

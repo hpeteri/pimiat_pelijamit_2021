@@ -2,10 +2,9 @@
 //QuadTree
 template <typename T>
 QuadTreePartition<T>* QuadTree<T>::CreatePartition(f32 min_x, f32 min_y, f32 max_x, f32 max_y, u32 depth){
-  auto partition = (typeof(QuadTreePartition<T>)*)this->Allocate(sizeof(QuadTreePartition<T>));
-
+  QuadTreePartition<T>* partition = (QuadTreePartition<T>*)this->Allocate(sizeof(QuadTreePartition<T>));
   
-  memset(partition, 0, sizeof(*partition));
+  memset(partition, 0, sizeof(QuadTreePartition<T>));
   partition->min = MATH::Vector2<f32>{min_x, min_y};
   partition->max = MATH::Vector2<f32>{max_x, max_y};;
   partition->isPartitioned = false;
@@ -22,31 +21,31 @@ QuadTreePartition<T>* QuadTree<T>::CreatePartition(f32 min_x, f32 min_y, f32 max
   return partition;
 }
 template <typename T>
-void QuadTree<T>::Init(MATH::Vector2<f32> min, MATH::Vector2<f32> max, u32 depth, void* (*Allocate)(size_t), void (*Free)(void*)){
-  this->Allocate = Allocate;
-  this->Free = Free;
-  this->min = min;
-  this->max = max;
+void QuadTree<T>::Init(MATH::Vector2<f32> min0, MATH::Vector2<f32> max0, u32 depth, void* (*Allocate0)(size_t), void (*Free0)(void*)){
+  this->Allocate = Allocate0;
+  this->Free = Free0;
+  this->min = min0;
+  this->max = max0;
   this->maxDepth = depth;
   this->fillRate = 2;
 
-  this->overflow.Init(Allocate, Free);
-  this->root = this->CreatePartition(min.x, min.y, max.x, max.y, 0);
+  this->overflow.Init(Allocate0, Free0);
+  this->root = this->CreatePartition(min0.x, min0.y, max0.x, max0.y, 0);
 }
 template <typename T>
-void QuadTree<T>::Insert(T element, MATH::Vector2<f32> min, MATH::Vector2<f32> max){
-  if(min.x < this->min.x || min.y < this->min.y ||
-     max.x > this->max.x || max.y > this->max.y){
+void QuadTree<T>::Insert(T element, MATH::Vector2<f32> min0, MATH::Vector2<f32> max0){
+  if(min0.x < this->min.x || min0.y < this->min.y ||
+     max0.x > this->max.x || max0.y > this->max.y){
     this->overflow.Add(element);
 
   }
   
-  this->root->Insert(element, min, max);
+  this->root->Insert(element, min0, max0);
 }
 template <typename T>
-void QuadTree<T>::Remove(T element, MATH::Vector2<f32> min, MATH::Vector2<f32> max){
-  if(min.x < this->min.x || min.y < this->min.y ||
-     max.x > this->max.x || max.y > this->max.y){
+void QuadTree<T>::Remove(T element, MATH::Vector2<f32> min0, MATH::Vector2<f32> max0){
+  if(min0.x < this->min.x || min0.y < this->min.y ||
+     max0.x > this->max.x || max0.y > this->max.y){
     for(u32 i = 0; i < this->overflow.count; i++){
       auto it = this->overflow[i];
       if(*it == element){
@@ -56,13 +55,13 @@ void QuadTree<T>::Remove(T element, MATH::Vector2<f32> min, MATH::Vector2<f32> m
     }
   }
   
-  this->root->Remove(element, min, max);
+  this->root->Remove(element, min0, max0);
   
 }
 template <typename T>
-void QuadTree<T>::GetUniqueElementsInOccupiedPartitions(MATH::Vector2<f32> min, MATH::Vector2<f32> max, Array<T>* dst){
+void QuadTree<T>::GetUniqueElementsInOccupiedPartitions(MATH::Vector2<f32> min0, MATH::Vector2<f32> max0, Array<T>* dst){
   dst->count = 0;
-  this->root->GetUniqueElementsInOccupiedPartitions(min, max, dst);
+  this->root->GetUniqueElementsInOccupiedPartitions(min0, max0, dst);
 }
 template <typename T>
 const QuadTreePartition<T>* QuadTree<T>::GetPartitionForPoint(MATH::Vector2<f32> point){
@@ -71,14 +70,14 @@ const QuadTreePartition<T>* QuadTree<T>::GetPartitionForPoint(MATH::Vector2<f32>
 //////////////////////////////////////////////////////////////////////////////////////////////
 //Partition
 template <typename T>
-void QuadTreePartition<T>::Insert(T element, MATH::Vector2<f32> min, MATH::Vector2<f32> max){
+void QuadTreePartition<T>::Insert(T element, MATH::Vector2<f32> min0, MATH::Vector2<f32> max0){
   
   if(this->isPartitioned){
     QuadTreePartition<T>* partitions[4] = {this->tl, this->tr, this->bl, this->br};
     for(auto partition : partitions){
-      if(min.x < partition->max.x && max.x > partition->min.x &&
-         min.y < partition->max.y && max.y > partition->min.y){
-      partition->Insert(element, min, max);
+      if(min0.x < partition->max.x && max0.x > partition->min.x &&
+         min0.y < partition->max.y && max0.y > partition->min.y){
+      partition->Insert(element, min0, max0);
       }
     }
     return;
@@ -109,29 +108,29 @@ void QuadTreePartition<T>::Insert(T element, MATH::Vector2<f32> min, MATH::Vecto
       auto entry = this->container[i]; 
       this->Insert(entry->element, entry->min, entry->max);
     }
-    this->Insert(element, min, max);
+    this->Insert(element, min0, max0);
     this->container.count = 0;
   }
 
   if(!this->isPartitioned){
-    if(min.x < this->max.x && max.x > this->min.x &&
-       min.y < this->max.y && max.y > this->min.y){
+    if(min0.x < this->max.x && max0.x > this->min.x &&
+       min0.y < this->max.y && max0.y > this->min.y){
       QuadTreeEntry<T> entry;
       entry.element = element;
-      entry.min = min;
-      entry.max = max;
+      entry.min = min0;
+      entry.max = max0;
       this->container.Add(entry);
     }
   }
 }
 template <typename T>
-void QuadTreePartition<T>::Remove(T element, MATH::Vector2<f32> min, MATH::Vector2<f32> max){
+void QuadTreePartition<T>::Remove(T element, MATH::Vector2<f32> min0, MATH::Vector2<f32> max0){
   if(this->isPartitioned){
     QuadTreePartition<T>* partitions[4] = {this->tl, this->tr, this->bl, this->br};
     for(auto partition : partitions){
-      if(min.x < partition->max.x && max.x > partition->min.x &&
-         min.y < partition->max.y && max.y > partition->min.y){
-        partition->Remove(element, min, max);
+      if(min0.x < partition->max.x && max0.x > partition->min.x &&
+         min0.y < partition->max.y && max0.y > partition->min.y){
+        partition->Remove(element, min0, max0);
       }    
     }
     //check if partitions are empty
@@ -153,21 +152,21 @@ void QuadTreePartition<T>::Remove(T element, MATH::Vector2<f32> min, MATH::Vecto
   }    
 }
 template <typename T>
-void QuadTreePartition<T>::GetUniqueElementsInOccupiedPartitions(MATH::Vector2<f32> min, MATH::Vector2<f32> max, Array<T>* dst){
+void QuadTreePartition<T>::GetUniqueElementsInOccupiedPartitions(MATH::Vector2<f32> min0, MATH::Vector2<f32> max0, Array<T>* dst){
 
   if(this->isPartitioned){
     QuadTreePartition<T>* partitions[4] = {this->tl, this->tr, this->bl, this->br};
     for(auto partition : partitions){
-      if(min.x < partition->max.x && max.x > partition->min.x &&
-         min.y < partition->max.y && max.y > partition->min.y){
-        partition->GetUniqueElementsInOccupiedPartitions(min, max, dst);
+      if(min0.x < partition->max.x && max0.x > partition->min.x &&
+         min0.y < partition->max.y && max0.y > partition->min.y){
+        partition->GetUniqueElementsInOccupiedPartitions(min0, max0, dst);
       }
     }
     return;
   }  
   if(!this->isPartitioned){
-    if(min.x < this->max.x && max.x > this->min.x &&
-       min.y < this->max.y && max.y > this->min.y){
+    if(min0.x < this->max.x && max0.x > this->min.x &&
+       min0.y < this->max.y && max0.y > this->min.y){
 
       
       for(u32 i = 0; i < this->container.count; i++){

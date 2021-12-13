@@ -23,9 +23,9 @@ struct QuadTreePartition{
   //top left, top right, bottom left, bottom right;
   QuadTreePartition<T> *tl, *tr, *bl, *br; 
 
-  void Insert(T element, MATH::Vector2<f32> min, MATH::Vector2<f32> max);  
-  void Remove(T element, MATH::Vector2<f32> min, MATH::Vector2<f32> max);
-  void GetUniqueElementsInOccupiedPartitions(MATH::Vector2<f32> min, MATH::Vector2<f32> max, Array<T>* dst);
+  void Insert(T element, MATH::Vector2<f32> min0, MATH::Vector2<f32> max0);  
+  void Remove(T element, MATH::Vector2<f32> min0, MATH::Vector2<f32> max0);
+  void GetUniqueElementsInOccupiedPartitions(MATH::Vector2<f32> min0, MATH::Vector2<f32> max0, Array<T>* dst);
   const QuadTreePartition<T>* GetPartitionForPoint(MATH::Vector2<f32> point);
 
 };
@@ -44,13 +44,13 @@ struct QuadTree{
   QuadTreePartition<T>* root;
   Array<T> overflow; //Not inside the tree  
 
-  void Init(MATH::Vector2<f32> min, MATH::Vector2<f32> max, u32 depth, void* (*Allocate)(size_t), void (*Free)(void*));
+  void Init(MATH::Vector2<f32> min, MATH::Vector2<f32> max0, u32 depth, void* (*Allocate0)(size_t), void (*Free0)(void*));
   QuadTreePartition<T>* CreatePartition(f32 min_x, f32 min_y, f32 max_x, f32 max_y, u32 depth);
 
-  void Insert(T element, MATH::Vector2<f32> min, MATH::Vector2<f32> max);
-  void Remove(T element, MATH::Vector2<f32> min, MATH::Vector2<f32> max);  
+  void Insert(T element, MATH::Vector2<f32> min0, MATH::Vector2<f32> max0);
+  void Remove(T element, MATH::Vector2<f32> min0, MATH::Vector2<f32> max0);  
 
-  void GetUniqueElementsInOccupiedPartitions(MATH::Vector2<f32> min, MATH::Vector2<f32> max, Array<T>* dst);
+  void GetUniqueElementsInOccupiedPartitions(MATH::Vector2<f32> min0, MATH::Vector2<f32> max0, Array<T>* dst);
 
   
   const QuadTreePartition<T>* GetPartitionForPoint(MATH::Vector2<f32> point);
