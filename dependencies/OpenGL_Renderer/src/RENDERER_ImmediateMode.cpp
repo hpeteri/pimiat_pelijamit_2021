@@ -61,7 +61,7 @@ namespace RENDERER{
       
       //Create new batch
       renderer->batchIndex = renderer->batches.count;
-      
+
       IM_Batch batch = {};
       batch.topology = topo;
       batch.state = state;
@@ -73,6 +73,7 @@ namespace RENDERER{
                          renderer->allocator.Free);      
 
       renderer->batches.Add(batch);
+      
             
       renderer->vertexState.color = 0xffffffff;
       renderer->vertexState.tc_x = 0;
@@ -245,8 +246,8 @@ namespace RENDERER{
                 
         //////////////////////////////////////////////////////////////////////
         //Reset
-        it->vertices.count = 0;
-        it->indices.count = 0;
+        it->vertices.Destroy();
+        it->indices.Destroy();
       }
       renderer->batches.count = 0;
       ResetMaterialDescriptors_IM(); 
