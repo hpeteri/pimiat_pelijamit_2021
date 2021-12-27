@@ -1,9 +1,8 @@
 @echo off
-call "%APPDATA%\shell.bat"
 cd /d %~dp0
 
 set PROJECT="Turbulence"
-set OUTPUT="./build/%PROJECT%.exe"
+set OUTPUT="./build/%PROJECT%_win.exe"
 
 set COMPILER_FLAGS= ^
 /WX /W4 /WL /wd4189 /wd4201 /wd4312 /wd4456 /wd4127 /wd4100 /wd4505 /wd4702 /wd4701 /we4457 /we4456 ^
@@ -57,4 +56,3 @@ IF NOT EXIST .\build mkdir build
 
 set START=%time%
 cl /Fo".//build//" %PREPROCESSOR% %COMPILER_FLAGS% %SRC% %LIBS% %INCLUDE_FOLDERS%  %LINKER_FLAGS% 
-

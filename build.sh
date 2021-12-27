@@ -4,9 +4,9 @@
 ./dependencies/OpenGL_Renderer/build.sh
 
 
-PROJECT="Pimiät_Pelijamit_2021_Henrik_Peteri"
+PROJECT="Turbulence"
 
-OUTPUT="./build/"$PROJECT".exe"
+OUTPUT="./build/"$PROJECT"_linux.exe"
 
 WARNINGS="-Werror"
 EXECUTABLE_NAME="./main.exe"

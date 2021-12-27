@@ -17,11 +17,6 @@ namespace PLATFORM{
   
   static void PushWindowEvent(WindowEvent event){
     Lock_Mutex(&eventBufferMutex);
-    #if 0
-    printf("%d Event type \n", (int)event.type);
-    printf("%d :: size\n", swapEventBuffer.size);
-    printf("%d events when pushing\n", swapEventBuffer.count);
-    #endif
     ASSERT(!(swapEventBuffer.count == swapEventBuffer.size));
     
     swapEventBuffer.events[swapEventBuffer.count] = event;
@@ -67,10 +62,8 @@ namespace PLATFORM{
 
     Thread thread = Create_Thread(CreateWindowProc, &args);
     if(!thread.handle) return false;
-
-    printf("Waiting on fence\n");
+    
     WaitOn_Fence(&fence);
-    printf("Waited on fence\n");
     Destroy_Fence(&fence);
     
     return ((u64)window->handle != 0);

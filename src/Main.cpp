@@ -296,7 +296,7 @@ void UpdateFPS(u64 &elapsedTime, u32 &frameCount){
   frameCount ++;
   if(elapsedTime >= PLATFORM::MICRO_SECONDS_IN_A_SECOND){
     elapsedTime -= PLATFORM::MICRO_SECONDS_IN_A_SECOND;
-    printf("%d FPS\n", frameCount);
+    //printf("%d FPS\n", frameCount);
     frameCount = 0;
   }
 }

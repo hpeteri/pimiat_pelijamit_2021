@@ -3,7 +3,7 @@
 #include "PLATFORM_Thread.h"
 #include "PLATFORM_Assert.h"
 namespace PLATFORM{
-#define CHECK_ERROR() perror(__func__); 
+#define CHECK_ERROR() /*perror(__func__)*/; 
 
 
   u32 GetProcessorCount(){return get_nprocs();}

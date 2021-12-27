@@ -9,13 +9,10 @@ namespace RENDERER{
     GL_Context glContext;
 
     bool Init_OpenGL_Context(){
-      printf("Init OpenGL Backend\n");
       if(glewInit() != GLEW_OK){
         printf("Failed to init glew\n");
         return false;
       }      
-      CHECK_GL_ERROR("Init GL Context");
-      
       glGenVertexArrays(1, &glContext.vao);
       CHECK_GL_ERROR("GenVertexArrays");
             

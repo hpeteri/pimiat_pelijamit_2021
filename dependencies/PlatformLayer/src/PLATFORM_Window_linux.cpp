@@ -146,7 +146,6 @@ namespace PLATFORM{
       //printf("CreateNotify\n");
       break;
     case DestroyNotify:
-      printf("Destroy\n");
       break;
     case GravityNotify:
       //printf("Gravity");
@@ -325,11 +324,9 @@ namespace PLATFORM{
     if(!visual){
       return false;
     }
-    printf("Created context\n");
     glXMakeCurrent(display, windowHandle, temp_glContext);
 
     if(glewInit() != GLEW_OK){
-      printf("Failed To init glew\n");
       return false;
     }
     /////////////////////////////////////////////////////////////////////
@@ -353,12 +350,10 @@ namespace PLATFORM{
                                       contextAttributes
                                       );
       if(context){
-        printf("Got 3.2 context\n");
         glXMakeCurrent(display, windowHandle, context);
         glXDestroyContext(display, temp_glContext);
       }else{
-        printf("Using legacy context\n");
-        
+        //Use legacy context
       }
     }
 
