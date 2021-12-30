@@ -1,9 +1,0 @@
-* Physics
-- Velocity verlet integration
-  - p = (v(old) + v(current)) / 2  * deltaTime
-
-* Joints
-- Distance Joint, Should this rotate with rigidBody
-- Hinge Joint ?. limit distance, but does rotation correct itself automatically ?
-  
-  
